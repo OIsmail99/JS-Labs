@@ -1,1 +1,1 @@
-These are my lab solution to the Javascript ITI Course.
+These are my lab solutions to the Javascript ITI Course.
