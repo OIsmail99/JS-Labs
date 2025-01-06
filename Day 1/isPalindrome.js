@@ -1,7 +1,7 @@
 function isPalindrome(str) {
-    if (typeof (str) === "string" || str instanceof String) {
+    if (typeof (str) === "string" || str instanceof String) { //if type is string
 
-        if (!isNaN(Number(str))) { //if not not a number = if it is a number :D
+        if (!isNaN(str)) { //if not not a number = if it is a number :D
             console.error("this is not a string");
             return;
         }

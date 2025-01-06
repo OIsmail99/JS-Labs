@@ -5,7 +5,7 @@ var orders = [ //array of objects
     {
         orderId: 'ORD001',
         customer: 'John Doe',
-        items: 'item1:2,item2:1,item3:5',
+        items: 'item1:2,item2:1,item3:5', //[]
         orderDate: '2023-12-01',
         deliveryDate: '2023-12-05',
         deliveryAddress: '123, Main Street, Springfield, USA',
@@ -50,8 +50,24 @@ let newOrders = orders.map(order => (
     {
         orderID: order.orderId,
         customer: order.customer,
-        totalItems: calcItems(order.items),
-        deliveryDuration: dateDiff(order.orderDate, order.deliveryDate),
+        totalItems: (function calcItems(string) {
+
+            let arr = string.split(":");
+            let sum = 0;
+
+            for (let i = 1; i < arr.length; i++) {
+                sum += Number(arr[i].charAt(0));
+            }
+            return sum;
+        })(order.items),
+
+        deliveryDuration: (function dateDiff(orderDate, deliveryDate) {
+            let newOrderDate = new Date(orderDate);
+            let newDeliveryDate = new Date(deliveryDate);
+            let diff = newDeliveryDate.getDate() - newOrderDate.getDate();
+            return diff;
+        })(order.orderDate, order.deliveryDate),
+
         deliveryCountry: order.deliveryAddress.split(",")[0],
         deliveryCity: order.deliveryAddress.split(",")[1],
         deliveryStreet: order.deliveryAddress.split(",")[2],
