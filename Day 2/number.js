@@ -10,4 +10,4 @@ function sumOfDigits(number) {
     }
     return sum;
 }
-console.log(sumOfDigits("123"));
+console.log(sumOfDigits(123));

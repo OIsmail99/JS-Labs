@@ -13,7 +13,7 @@ function numberOfVowels(sentence) {
 }
 
 try {
-    console.log(numberOfVowels(123));
+    console.log(numberOfVowels("I love Mina"));
 }
 catch (e) {
     console.log(e);

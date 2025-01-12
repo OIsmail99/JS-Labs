@@ -72,6 +72,23 @@ console.log(userAges);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // var userNames = [];
 // users.forEach(function(user, i){
 //     // console.log(users[i].name)
