@@ -10,4 +10,4 @@ obj.toString = function () {
 
 console.log(String({ num: 3 }));
 console.log(String(obj));
-console.log(String({}));
+console.log(String({}))

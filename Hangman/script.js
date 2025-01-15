@@ -1,163 +1,138 @@
-// Letters
+// adding spans of letters
 const letters = "abcdefghijklmnopqrstuvwxyz";
-
-// Get Array From Letters
 let lettersArray = Array.from(letters);
-
-// Select Letters Container
-let lettersContainer = document.querySelector(".letters");
-
-
-lettersArray.forEach(letter => { //span for each letter.
-
+let lettersContainer = document.getElementsByClassName("letters")[0];
+lettersArray.forEach((letter) => {
     let span = document.createElement("span");
-    // Create text of the span, then adding it to the span
-    let theLetter = document.createTextNode(letter); //text
+    let theLetter = document.createTextNode(letter); //character
     span.appendChild(theLetter);
-    span.className = 'letter-box'; //to be styled
-    lettersContainer.appendChild(span); //add to the container.
-
+    span.className = "letter-box"; // to be styled
+    lettersContainer.appendChild(span); // add inside the parent (letters div).
 });
 
-//category: arr of words
+// words is an object with caregory as key and an array of objects as value.
 const words = {
-    programming: ["java", "javascript", "golang", "ruby", "fortran", "r", "mysql", "python"],
-    movies: ["A cure for wellness", "Inception", "Parasite", "Interstellar", "Whiplash", "Memento", "The green mile", "Up"],
-    people: ["", "Omar", "Osama", "Mina", "Helmy"],
-    countries: ["Syria", "Palestine", "Sweeden", "Egypt", "Saudi", "Denmark"]
-}
+    programming: [
+        { word: "java", hint: "write once, run everywhere" },
+        { word: "javascript", hint: "A scripting language." },
+        { word: "python", hint: "A snake" },
+    ],
+    movies: [
+        { word: "inception", hint: "A sci-fi movie" },
+        { word: "parasite", hint: "A South Korean thriller." },
+    ],
+    countries: [
+        { word: "egypt", hint: "Pyramids" },
+        { word: "japan", hint: "Technology" },
+    ],
+};
 
-// Get Random Property
-let allKeys = Object.keys(words); //random prop
-let randomPropNumber = Math.floor(Math.random() * allKeys.length); //random index of the key
-let randomPropName = allKeys[randomPropNumber]; //random category
-let randomPropValue = words[randomPropName]; //array of words
-let randomValueNumber = Math.floor(Math.random() * randomPropValue.length); //random index of the array
-let randomValueValue = randomPropValue[randomValueNumber]; //the word
-// Set Category Info
-document.querySelector(".game-info .category span").innerHTML = randomPropName;
-// Select Letters Guess Element
-let lettersGuessContainer = document.querySelector(".letters-guess");
+// select random word along with its hint.
+let allKeys = Object.keys(words);
+let randomPropName = allKeys[Math.floor(Math.random() * allKeys.length)]; // category
+let randomWordObj =
+    words[randomPropName][Math.floor(Math.random() * words[randomPropName].length)]; // word object
+let randomWord = randomWordObj.word;
+let randomHint = randomWordObj.hint;
 
-// Convert Chosen Word To Array
-let lettersAndSpace = Array.from(randomValueValue);
 
-// Create Spans Depened On Word
-lettersAndSpace.forEach(letter => {
 
-    // Create Empty Span
+// displaying category and hint
+document.getElementsByClassName("category")[0].innerHTML = "Category: <span>" + randomPropName + "</span>";
+let hintDiv = document.getElementsByClassName("hint")[0];
+hintDiv.textContent = "Hint:" + randomHint;
+
+
+// Display attempts left
+let attemptsLeft = 6;
+let attemptsDiv = document.createElement("div");
+attemptsDiv.className = "attempts";
+attemptsDiv.textContent = "Attempts Left: " + attemptsLeft;
+document.getElementsByClassName("game-info")[0].appendChild(attemptsDiv);
+
+// Create empty spans for the chosen word in the letters-guess container
+let lettersGuessContainer = document.getElementsByClassName("letters-guess")[0];
+Array.from(randomWord).forEach((letter) => {
     let emptySpan = document.createElement("span");
-
-    // If Letter Is Space
-    if (letter === ' ') {
-
-        // Add Class To The Span
-        emptySpan.className = 'with-space';
-
-    }
-
-    // Append Span To The Letters Guess Container
     lettersGuessContainer.appendChild(emptySpan);
-
 });
 
-// Select Guess Spans
 let guessSpans = document.querySelectorAll(".letters-guess span");
-
-// Set Wrong Attempts
 let wrongAttempts = 0;
 
-// Select The Draw Element
-let theDraw = document.querySelector(".hangman-draw");
 
-// Handle Clicking On Letters
+// Handle letter clicks
 document.addEventListener("click", (e) => {
-
-    // Set The Choose Status
+    // if (lettersGuessContainer.className === "letter-guess finished") {
+    //     return;
+    // }
     let theStatus = false;
 
-    if (e.target.className === 'letter-box') {
-
+    if (e.target.className === "letter-box") {
         e.target.classList.add("clicked");
+        let theClickedLetter = e.target.innerHTML;
 
-        // Get Clicked Letter
-        let theClickedLetter = e.target.innerHTML.toLowerCase();
+        Array.from(randomWord).
+            map((wordLetter, wordIndex) => {
+                if (theClickedLetter === wordLetter) {
+                    theStatus = true;
+                    guessSpans[wordIndex].innerHTML = theClickedLetter;
+                    document.getElementById("success").play();
+                }
+            });
 
-        // The Chosen Word
-        let theChosenWord = Array.from(randomValueValue.toLowerCase());
-
-        theChosenWord.forEach((wordLetter, WordIndex) => {
-
-            // If The Clicked Letter Equal To One Of The Chosen Word Letter
-            if (theClickedLetter == wordLetter) {
-
-                // Set Status To Correct
-                theStatus = true;
-
-                // Loop On All Guess Spans
-                guessSpans.forEach((span, spanIndex) => {
-
-                    if (WordIndex === spanIndex) {
-
-                        span.innerHTML = theClickedLetter;
-
-                    }
-
-                });
-
-            }
-
-        });
-
-        // Outside Loop
-
-        // If Letter Is Wrong
-        if (theStatus !== true) {
-
-            // Increase The Wrong Attempts
+        if (!theStatus) {
             wrongAttempts++;
-
-            // Add Class Wrong On The Draw Element
-            theDraw.classList.add(`wrong-${wrongAttempts}`);
-
-            // Play Fail Sound
+            attemptsLeft--;
+            attemptsDiv.textContent = "Attempts Left: " + attemptsLeft; // Update UI
             document.getElementById("fail").play();
 
-            if (wrongAttempts === 8) {
-
-                endGame();
-
-                lettersContainer.classList.add("finished");
-
+            if (attemptsLeft === 0) {
+                endGame("Game Over! The word was:");
             }
-
-        } else {
-
-            // Play Success Sound
-            document.getElementById("success").play();
-
         }
 
-    }
 
+        
+        let allCorrect = true;
+        guessSpans.forEach((span) => {
+            if (span.innerHTML === "") {
+                allCorrect = false;
+            }
+        });
+        if (allCorrect) {
+            //document.getElementById("success").play();
+            endGame("Congratulations! You guessed the word: ");
+        }
+    }
 });
 
-// End Game Function
-function endGame() {
 
-    // Create Popup Div
+let timerDiv = document.getElementsByClassName("timer")[0];
+
+
+let remaining = 60;
+
+let timer = setInterval(() => {
+    remaining--;
+    timerDiv.textContent = "Time left: " + remaining + " seconds";
+    if (remaining == 0) {
+        clearInterval(timer);
+        document.getElementById("fail").play();
+        endGame("Time's up! The word was:");
+    }
+}, 1000);
+
+// End the Game
+function endGame(message) {
+    clearInterval(timer);
     let div = document.createElement("div");
-
-    // Create Text
-    let divText = document.createTextNode(`Game Over, The Word Is ${randomValueValue}`);
-
-    // Append Text To Div
-    div.appendChild(divText);
-
-    // Add Class On Div
-    div.className = 'popup';
-
-    // Append To The Body
+    div.className = "popup";
+    div.innerHTML = message + "<strong>" + randomWord + "</strong><br>";
+    let reloadBtn = document.createElement("button");
+    reloadBtn.textContent = "Play Again";
+    reloadBtn.onclick = () => location.reload();
+    div.appendChild(reloadBtn);
     document.body.appendChild(div);
-
+    lettersContainer.classList.add("finished");
 }

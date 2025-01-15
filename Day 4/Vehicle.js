@@ -24,25 +24,28 @@ function Car(type, property) {
     };
 }
 Car.prototype = Object.create(Vehicle.prototype);
-Car.prototype.constructor = Car;
+Car.prototype.constructor = Car; //setting the constructor of the Car object to be Car
 
 var mg = new Car("mg", "value");
 var vehicle = new Vehicle();
 
-// for (var i = 1; i <= 51; i++) { //the last instance (51) will throw an error
-//     try {
-//         new Car();
-//     }
-//     catch (e) {
-//         console.log(e.message);
-//     }
-// }
+for (var i = 1; i <= 51; i++) { //the last instance (51) will throw an error
+    try {
+        new Car();
+    }
+    catch (e) {
+        console.log(e.message);
+    }
+}
 function isInstanceOfCar(obj) {
     return obj instanceof Car;
 }
+function isInstanceOfCar2(obj) {
+    return obj.constructor === Car;
+}
 
-console.log(isInstanceOfCar(mg)); //true
-console.log(isInstanceOfCar(vehicle)); //false
+console.log(isInstanceOfCar2(mg)); //true
+//console.log(isInstanceOfCar(vehicle)); //false
 
 
 
